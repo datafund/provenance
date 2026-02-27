@@ -7,34 +7,37 @@ Store data with cryptographic provenance on the [Swarm](https://ethswarm.org) de
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                      Your Application                     │
-├───────────┬───────────────┬──────────────────────────────┤
-│    SDK    │      CLI      │          MCP Server          │
-│  (TS/JS)  │   (Python)    │    (AI agent integration)    │
-└─────┬─────┴───┬───────────┴──────────────┬───────────────┘
-      │         │                          │
-      │    ┌────┴─────┐                    │
-      │    │  Chain    │                   │
-      │    │  Client   │                   │
-      │    └────┬──────┘                   │
-      │         │                          │
-      ▼         │         ▼                ▼
-┌───────────────│───────────────────────────────────┐
-│  Provenance   │    Gateway                        │
-│  (FastAPI  —  │  swarm_connect)                   │
-│               │       │                           │
-│   stamps, upload/download, notary signing         │
-└───────────────│───────┬───────────────────────────┘
-                │       │
-                │       ▼
-                │   Swarm Network
-                │   (decentralized storage)
-                │
-                ▼
-          Blockchain RPC
-          (Base Sepolia)
-     DataProvenance contract
+┌─────────────────────────────────────────────────────────┐
+│                     Your Application                     │
+├──────────────────────────┬──────────────────────────────┤
+│      SDK    │    CLI     │          MCP Server          │
+│     (TS/JS) │  (Python)  │    (AI agent integration)    │
+└───┬─────────┴──┬─────────┴─────────────┬────────────────┘
+    │            │                       │
+    ├────────────┤                       │
+    │    Chain Clients (direct)          │
+    │     (viem / web3.py)              │
+    ├────────────┤                       │
+    │            │                       │
+    │   ┌────────┘          ┌────────────┘
+    │   │                   │
+    ▼   ▼                   ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Provenance Gateway                     │
+│              (FastAPI — swarm_connect)                    │
+│                                                          │
+│       stamps, upload/download, notary signing            │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+                           ▼
+                      Swarm Network
+                  (decentralized storage)
+
+    ── SDK & CLI also connect directly ──
+
+                    Blockchain RPC
+                    (Base Sepolia)
+               DataProvenance contract
 ```
 
 SDK and CLI can anchor data hashes **directly** on-chain via their own chain client.
