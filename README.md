@@ -2,13 +2,12 @@
 
 Store data with cryptographic provenance on the [Swarm](https://ethswarm.org) decentralized network. Every upload is hashed, optionally signed by a notary, and can be anchored on-chain — giving you an immutable, verifiable record of what was stored, when, and by whom.
 
-> For a non-technical overview, visit [provenance.datafund.io](https://provenance.datafund.io)
-
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                     Your Application                     │
+│                    dataprovenance-app                     │
+│                (Astro + React web UI)                     │
 ├──────────────────────────┬──────────────────────────────┤
 │      SDK    │    CLI     │          MCP Server          │
 │     (TS/JS) │  (Python)  │    (AI agent integration)    │
@@ -16,7 +15,7 @@ Store data with cryptographic provenance on the [Swarm](https://ethswarm.org) de
     │            │                        │
     ├────────────┼────────────────────────┤
     │       Chain Clients (direct)        │
-    │      (viem / web3.py)                │
+    │       (viem / web3.py)              │
     ├────────────┼────────────────────────┘
     │            │                        │
     │   ┌────────┘          ┌─────────────┘
@@ -35,9 +34,8 @@ Store data with cryptographic provenance on the [Swarm](https://ethswarm.org) de
 
     ── All clients also connect directly ──
 
-                    Blockchain RPC
-                    (Base Sepolia)
-               DataProvenance contract
+              Blockchain RPC (Base Sepolia)
+       DataProvenance smart contracts (Solidity)
 ```
 
 All three clients (SDK, CLI, MCP Server) can anchor data hashes **directly** on-chain via their own chain client.
@@ -47,11 +45,12 @@ The gateway handles Swarm storage, stamp management, and notary signing — it h
 
 | Component | Repo | Language | Description |
 |-----------|------|----------|-------------|
+| **Smart Contracts** | [ConsentsBasedDataProvenance](https://github.com/datafund/ConsentsBasedDataProvenance) | Solidity | Consent management and on-chain data provenance (Base Sepolia) |
 | **SDK** | [swarm_provenance_SDK](https://github.com/datafund/swarm_provenance_SDK) | TypeScript | Library for browser and Node.js apps |
 | **CLI** | [swarm_provenance_CLI](https://github.com/datafund/swarm_provenance_CLI) | Python | Command-line tool for uploads, downloads, chain anchoring, and stamp management |
-| **MCP Server** | [swarm_provenance_mcp](https://github.com/datafund/swarm_provenance_mcp) | Python | AI agent integration via Model Context Protocol, with optional chain anchoring |
+| **MCP Server** | [swarm_provenance_MCP](https://github.com/datafund/swarm_provenance_MCP) | Python | AI agent integration via Model Context Protocol, with optional chain anchoring |
+| **App** | [dataprovenance-app](https://github.com/datafund/dataprovenance-app) | TypeScript | Web interface for recording, verifying, and tracing data provenance |
 | **Gateway** | [swarm_connect](https://github.com/datafund/swarm_connect) | Python | FastAPI server bridging clients to a Swarm Bee node |
-| **Landing Page** | [provenance-landing](https://github.com/datafund/provenance-landing) | Astro | [provenance.datafund.io](https://provenance.datafund.io) |
 
 ## Key Features
 
@@ -102,8 +101,16 @@ swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 
 ### MCP Server (AI Agents)
 
+**Option A — Docker (recommended):**
+
 ```bash
-git clone https://github.com/datafund/swarm_provenance_mcp.git
+docker pull ghcr.io/datafund/swarm-provenance-mcp:latest
+```
+
+**Option B — From source:**
+
+```bash
+git clone https://github.com/datafund/swarm_provenance_MCP.git
 cd swarm_provenance_mcp
 pip install -e .
 ```
@@ -114,7 +121,8 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
 {
   "mcpServers": {
     "swarm-provenance": {
-      "command": "swarm-provenance-mcp",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "ghcr.io/datafund/swarm-provenance-mcp:latest"],
       "env": {
         "SWARM_GATEWAY_URL": "https://provenance-gateway.datafund.io",
         "CHAIN_ENABLED": "true"
@@ -123,6 +131,8 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
   }
 }
 ```
+
+Or if installed from source, replace `"command"` / `"args"` with `"command": "swarm-provenance-mcp"`.
 
 ## Gateway
 
@@ -134,7 +144,6 @@ This toolkit is in **alpha / proof-of-concept** stage. Storage on Swarm is rente
 
 ## Links
 
-- [provenance.datafund.io](https://provenance.datafund.io) — product overview
 - [datafund.io](https://datafund.io) — Datafund
 - [github.com/datafund](https://github.com/datafund) — all repos
 
