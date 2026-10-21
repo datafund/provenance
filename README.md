@@ -87,17 +87,22 @@ console.log('Reference:', result.reference);
 
 ### CLI (Python)
 
+The CLI is not on PyPI. Install it from a release tag:
+
 ```bash
-pip install -e "git+https://github.com/datafund/swarm_provenance_CLI.git#egg=swarm-provenance-uploader"
+pip install "swarm-provenance-uploader @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"
 ```
 
 ```bash
-# Upload a file
-swarm-prov-upload upload --file /path/to/data.txt
+# Upload a file on the free tier
+swarm-prov-upload --free upload --file /path/to/data.txt --usePool
 
 # Download and verify
 swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 ```
+
+- `--free` uses the gateway's free tier (rate-limited, no payment). It is a global option, so it goes before the command. Without it the gateway answers "Payment required".
+- `--usePool` takes a ready postage stamp from the gateway's pool (a few seconds) instead of buying a new one (over a minute).
 
 ### MCP Server (AI Agents)
 
