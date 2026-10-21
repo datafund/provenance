@@ -92,12 +92,20 @@ pip install -e "git+https://github.com/datafund/swarm_provenance_CLI.git#egg=swa
 ```
 
 ```bash
-# Upload a file
-swarm-prov-upload upload --file /path/to/data.txt
+# Upload a file on the free tier, using a stamp from the gateway's pool
+swarm-prov-upload --free upload --file /path/to/data.txt --usePool
 
 # Download and verify
 swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 ```
+
+`--free` is a global option, so it goes **before** the command (`swarm-prov-upload --free upload …`, not `upload … --free`).
+
+- **Free tier** (`--free`): no payment, rate-limited. Meant for development and testing.
+- **Paid** (`--x402`): pay per request in USDC on Base via [x402](https://www.x402.org). Without `--free` or `--x402`, an upload to the public gateway stops with "Payment required".
+- `--usePool` takes a ready-made postage stamp from the gateway's pool, so the upload takes seconds. Without it the CLI buys a new stamp, which takes over a minute. If the pool is empty (`swarm-prov-upload --free stamps pool-status`), leave out `--usePool`.
+
+Downloads need neither flag.
 
 ### MCP Server (AI Agents)
 
@@ -111,7 +119,7 @@ docker pull ghcr.io/datafund/swarm-provenance-mcp:latest
 
 ```bash
 git clone https://github.com/datafund/swarm_provenance_MCP.git
-cd swarm_provenance_mcp
+cd swarm_provenance_MCP
 pip install -e .
 ```
 
