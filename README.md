@@ -93,6 +93,8 @@ The CLI is not on PyPI. Install it from a release tag:
 pip install "swarm-provenance-uploader @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"
 ```
 
+Paid use with x402 needs the `[x402]` extra: `pip install "swarm-provenance-uploader[x402] @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"`.
+
 ```bash
 # Upload a file on the free tier
 swarm-prov-upload --free upload --file /path/to/data.txt --usePool
@@ -104,7 +106,7 @@ swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 - `--free` uses the gateway's free tier (rate-limited, no payment). It is a global option, so it goes before the command. Without it the gateway answers "Payment required".
 - `--usePool` takes a ready postage stamp from the gateway's pool (a few seconds) instead of buying a new one (over a minute).
 
-If the upload fails with "Failed to acquire stamp from pool: 429" or "No stamps available in pool", the pool can't serve you right now. The pool has a shared daily allowance that resets at 00:00 UTC. Run the same command without `--usePool`; it buys a new stamp, which takes a few minutes. A 429 at other steps comes from the general rate limit: wait a minute and try again.
+If the upload fails with "Failed to acquire stamp from pool: 429" or "No stamps available in pool", the pool can't serve you right now. The pool has a shared daily allowance that resets at 00:00 UTC. Run the same command without `--usePool`; it buys a new stamp, which takes a few minutes. To see whether the pool has stamps before you upload, run `swarm-prov-upload --free stamps pool-status`. A 429 at other steps comes from the general rate limit: wait a minute and try again.
 
 ### MCP Server (AI Agents)
 
