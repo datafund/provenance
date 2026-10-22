@@ -49,7 +49,7 @@ The gateway handles Swarm storage, stamp management, and notary signing — it h
 | **SDK** | [swarm_provenance_SDK](https://github.com/datafund/swarm_provenance_SDK) | TypeScript | Library for browser and Node.js apps |
 | **CLI** | [swarm_provenance_CLI](https://github.com/datafund/swarm_provenance_CLI) | Python | Command-line tool for uploads, downloads, chain anchoring, and stamp management |
 | **MCP Server** | [swarm_provenance_MCP](https://github.com/datafund/swarm_provenance_MCP) | Python | AI agent integration via Model Context Protocol, with optional chain anchoring |
-| **App** | [dataprovenance-app](https://github.com/datafund/dataprovenance-app) | TypeScript | Web interface for recording, verifying, and tracing data provenance |
+| **App** | [dataprovenance.app](https://dataprovenance.app) (live app) | TypeScript | Web interface for recording, verifying, and tracing data provenance |
 | **Gateway** | [swarm_connect](https://github.com/datafund/swarm_connect) | Python | FastAPI server bridging clients to a Swarm Bee node |
 
 ## Key Features
