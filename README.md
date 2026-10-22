@@ -104,6 +104,8 @@ swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 - `--free` uses the gateway's free tier (rate-limited, no payment). It is a global option, so it goes before the command. Without it the gateway answers "Payment required".
 - `--usePool` takes a ready postage stamp from the gateway's pool (a few seconds) instead of buying a new one (over a minute).
 
+If the upload fails with "429 Too Many Requests" or "No stamps available in pool", the pool can't serve you right now. It has a shared daily limit that resets at 00:00 UTC. Run the same command without `--usePool`. It buys a new stamp, which takes one to two minutes. To see the pool, run `swarm-prov-upload --free stamps pool-status`.
+
 ### MCP Server (AI Agents)
 
 **Option A — Docker (recommended):**
@@ -114,9 +116,11 @@ docker pull ghcr.io/datafund/swarm-provenance-mcp:latest
 
 **Option B — From source:**
 
+The MCP server needs Python 3.10 or later.
+
 ```bash
 git clone https://github.com/datafund/swarm_provenance_MCP.git
-cd swarm_provenance_mcp
+cd swarm_provenance_MCP
 pip install -e .
 ```
 
