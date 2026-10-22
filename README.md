@@ -95,6 +95,8 @@ pip install "swarm-provenance-uploader @ git+https://github.com/datafund/swarm_p
 
 Paid use with x402 needs the `[x402]` extra: `pip install "swarm-provenance-uploader[x402] @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"`.
 
+Blockchain anchoring with the `swarm-prov-upload chain` commands needs the `[blockchain]` extra: `pip install "swarm-provenance-uploader[blockchain] @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"`.
+
 ```bash
 # Upload a file on the free tier
 swarm-prov-upload --free upload --file /path/to/data.txt --usePool
