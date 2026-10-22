@@ -151,7 +151,7 @@ The public gateway is available at `https://provenance-gateway.datafund.io`. To 
 
 ## Status
 
-This toolkit is in **alpha / proof-of-concept** stage. Storage on Swarm is rented — data persistence depends on postage stamp validity.
+This toolkit is a **pre-release**, meant for testing environments (not for production). Storage on Swarm is rented — data persistence depends on postage stamp validity.
 
 ## Links
 
