@@ -104,7 +104,7 @@ swarm-prov-upload download <swarm_hash> --output-dir ./downloads
 - `--free` uses the gateway's free tier (rate-limited, no payment). It is a global option, so it goes before the command. Without it the gateway answers "Payment required".
 - `--usePool` takes a ready postage stamp from the gateway's pool (a few seconds) instead of buying a new one (over a minute).
 
-If the upload fails with "429 Too Many Requests" or "No stamps available in pool", the pool can't serve you right now. It has a shared daily limit that resets at 00:00 UTC. Run the same command without `--usePool`. It buys a new stamp, which takes one to two minutes. To see the pool, run `swarm-prov-upload --free stamps pool-status`.
+If the upload fails with "Failed to acquire stamp from pool: 429" or "No stamps available in pool", the pool can't serve you right now. The pool has a shared daily allowance that resets at 00:00 UTC. Run the same command without `--usePool`; it buys a new stamp, which takes a few minutes. A 429 at other steps comes from the general rate limit: wait a minute and try again.
 
 ### MCP Server (AI Agents)
 
