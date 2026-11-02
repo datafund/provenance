@@ -23,9 +23,9 @@ Improvements to the README, architecture diagram, or documentation links are wel
 **Workflow:**
 
 1. Fork the repo
-2. Create a branch from `development`
+2. Create a branch from `main`
 3. Make your changes
-4. Open a PR targeting `development`
+4. Open a PR targeting `main`
 
 The `main` branch is protected and requires a review to merge.
 
