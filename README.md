@@ -61,7 +61,7 @@ The gateway handles Swarm storage, stamp management, and notary signing — it h
 - **Provenance metadata** — every upload wraps data with SHA256 hash, timestamp, and encoding info
 - **Notary signing** — optional EIP-191 cryptographic signature proving data authenticity
 - **Stamp management** — purchase, extend, and monitor postage stamps using duration and size presets
-- **Free tier** — rate-limited access for development and testing (3 requests/min)
+- **Free tier** — rate-limited access for development and testing (3 requests/min). On the production gateway each client also gets at most 3 free small stamps from the pool (`--usePool`) per day, reset at 00:00 UTC.
 - **x402 payments** — pay-per-request access with x402 (v1 and v2). On the production gateway you pay **real USDC on Base mainnet**. The software is alpha: no guarantees, refunds should not be expected, so use small amounts. For testing, use the staging gateway `provenance-gateway.dev.datafund.io` (Base Sepolia, test USDC). See [Gateway](#gateway).
 - **Integrity verification** — automatic SHA256 hash check on download
 
@@ -87,7 +87,7 @@ const result = await client.upload('Hello, World!', { standard: 'v1' });
 console.log('Reference:', result.reference);
 ```
 
-The SDK's default payment mode is `payment: 'free'`, which uses the gateway's free tier.
+The SDK's default payment mode is `payment: 'free'`, which uses the gateway's free tier. SDK x402 payments (`payment: { wallet }`) default to Base Sepolia, so paying on the production gateway needs the Base mainnet network: `payment: { wallet, network: 'eip155:8453', v1Network: 'base' }`. That spends real USDC.
 
 ### CLI (Python)
 
@@ -99,7 +99,7 @@ pip install "swarm-provenance-uploader @ git+https://github.com/datafund/swarm_p
 
 Paid use with x402 needs the `[x402]` extra: `pip install "swarm-provenance-uploader[x402] @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"`.
 
-> **Warning:** the CLI's default gateway is production. Paid uploads (`--x402`) with the default gateway spend **real USDC on Base mainnet**. To test without real money, point the CLI at the staging gateway with `PROVENANCE_GATEWAY_URL=https://provenance-gateway.dev.datafund.io`, or use `--free` for the free tier. The CLI's x402 network defaults to `base-sepolia`, so paying on production also needs `X402_NETWORK=base` (or `--x402-network base`).
+> **Warning:** the CLI's default gateway is production. Paid uploads (`--x402`) with the default gateway spend **real USDC on Base mainnet**. To test without real money, point the CLI at the staging gateway with `PROVENANCE_GATEWAY_URL=https://provenance-gateway.dev.datafund.io`, or use `--free` for the free tier. The CLI's x402 network defaults to `base-sepolia`, so paying on production also needs `X402_NETWORK=base`, or the global option `--x402-network base`, which goes before the command like `--free`: `swarm-prov-upload --x402 --x402-network base upload ...`.
 
 Blockchain anchoring with the `swarm-prov-upload chain` commands needs the `[blockchain]` extra: `pip install "swarm-provenance-uploader[blockchain] @ git+https://github.com/datafund/swarm_provenance_CLI@v0.11.0"`.
 
@@ -118,6 +118,8 @@ PROVENANCE_GATEWAY_URL=https://provenance-gateway.dev.datafund.io swarm-prov-upl
 - `--usePool` takes a ready postage stamp from the gateway's pool (a few seconds) instead of buying a new one (over a minute).
 
 If the upload fails with "Failed to acquire stamp from pool: 429" or "No stamps available in pool", the pool can't serve you right now. The pool has a shared daily allowance that resets at 00:00 UTC. Run the same command without `--usePool`; it buys a new stamp, which takes a few minutes. To see whether the pool has stamps before you upload, run `swarm-prov-upload --free stamps pool-status`. A 429 at other steps comes from the general rate limit: wait a minute and try again.
+
+On the production gateway each client can take 3 free small stamps from the pool per day. After that, the gateway answers 402 (code `DAILY_STAMP_ALLOWANCE_PER_CLIENT_EXHAUSTED`) and the CLI prints "Payment required ... Use --x402 ...", even with `--free`. On production, `--x402` means paying real USDC, so do not follow that suggestion unless you mean to pay. Instead, wait for the reset at 00:00 UTC, use the staging gateway, or run the same command without `--usePool` to buy a new stamp on the free tier (this takes a few minutes).
 
 ### MCP Server (AI Agents)
 
@@ -164,7 +166,7 @@ There are two public gateways:
 
 | Gateway | URL | x402 network | Token | Free tier | Use for |
 |---------|-----|--------------|-------|-----------|---------|
-| Production | `https://provenance-gateway.datafund.io` | Base mainnet (`base`) | Real USDC | Yes, 3 requests/min | Real use (alpha) |
+| Production | `https://provenance-gateway.datafund.io` | Base mainnet (`base`) | Real USDC | Yes, 3 requests/min; 3 free pooled stamps per client per day (resets 00:00 UTC) | Real use (alpha) |
 | Staging | `https://provenance-gateway.dev.datafund.io` | Base Sepolia (`base-sepolia`) | Test USDC | Yes, 3 requests/min | Integration testing only |
 
 Both accept x402 v1 and v2. For the free tier, send the header `X-Payment-Mode: free` (CLI: `--free`, SDK: `payment: 'free'`). The staging gateway stores data on the real Swarm network; use it for integration testing only.
